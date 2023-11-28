@@ -33,13 +33,14 @@ export const authOptions: AuthOptions = {
                     }
                 });
 
+
                 if(!user) {
                     return null;
                 }
 
-                const userPassword = user.passwordHash;
+                const userPassword = user?.passwordHash;
 
-                const isValidPassword = bcrypt.compareSync(password, userPassword);
+                const isValidPassword = await bcrypt.compare(password, userPassword);
 
                 if(!isValidPassword) {
                     return null;
@@ -55,27 +56,29 @@ export const authOptions: AuthOptions = {
     },
     callbacks: {
         session: ({ session, token }) => {
-          return {
-            ...session,
-            user: {
-              ...session.user,
-              role: token.role,
-              id: token.id,
-              randomKey: token.randomKey
+
+            return {
+                ...session,
+                user: {
+                ...session.user,
+                role: token.role,
+                id: token.id,
+                randomKey: token.randomKey
+                }
             }
-          }
         },
         jwt: ({ token, user }) => {
-          if (user) {
-            const u = user as unknown as any
-            return {
-              ...token,
-              id: u.id,
-              role: u.role,
-              randomKey: u.randomKey
+
+            if (user) {
+                const u = user as unknown as any
+                return {
+                ...token,
+                id: u.id,
+                role: u.role,
+                randomKey: u.randomKey
+                }
             }
-          }
-          return token
+            return token
         }
     }
 }

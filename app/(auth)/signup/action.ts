@@ -2,7 +2,7 @@
 import prisma from "@/app/lib/prisma"
 import bcrypt from 'bcryptjs'
 import { z } from "zod"
-import { UserSchema } from "../schema/users"
+import { UserSchema } from "../../schema/users"
 
 export async function CreateUser(prevState:any, formData:z.infer<typeof UserSchema>){
   const email = formData.email
