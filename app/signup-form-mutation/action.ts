@@ -1,11 +1,13 @@
 'use server'
 import prisma from "@/app/lib/prisma"
 import bcrypt from 'bcryptjs'
+import { z } from "zod"
+import { UserSchema } from "../schema/users"
 
-export async function CreateUser(prevState:any, formData:FormData){
-  const email = formData.get('email')?.toString()
-  const password = formData.get('password')?.toString()
-
+export async function CreateUser(prevState:any, formData:z.infer<typeof UserSchema>){
+  const email = formData.email
+  const password = formData.passwordHash
+  // console.log(email, password)
   if(email&& password){
     try{
       const user = await prisma.user.findUnique({
@@ -35,9 +37,8 @@ export async function CreateUser(prevState:any, formData:FormData){
         code: 200
       }
     }catch(e:any){
-      console.log(e);
       return {
-        message: 'Failed to create',
+        message:  'Failed to create',
         code: 503
       }
     }
